@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider     = "prisma-client-js"
+  moduleFormat = "cjs"
+  engineType   = "binary"
+}
+
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../generated/dto"
+  exportRelationModifierClasses   = "true"
+  classValidation                 = "true"
+  outputToNestJsResourceStructure = "false"
+  flatResourceStructure           = "false"
+  reExport                        = "true"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                    = ""
+  fileNamingStyle                 = "kebab"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  role     Role    @default(USER)
+  email    String  @unique
+  password String
+  isNew    Boolean @default(true)
+  isBanned Boolean @default(false)
+
+  profile                    Profile?            @relation("UserProfile")
+  chapterMember              ChapterMember?      @relation("ChapterMembershipUser")
+  chapterOfficial            ChapterOfficial?    @relation("ChapterOfficialUser")
+  trainings                  Training[]          @relation("TrainingCreator")
+  trainingChecklistApprover  TrainingChecklist[] @relation("TrainingApprover")
+  trainingChecklistApplicant TrainingChecklist[] @relation("TrainingApplicant")
+}
+
+model Profile {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  fullName      String?
+  nickname      String?   @unique
+  birthdate     DateTime?
+  mobileNo      String?
+  address       String?
+  weight        Int?
+  avatarUrl     String?
+  avatarFileKey String?
+  ecName        String?
+  ecMobileNo    String?
+  ecAddress     String?
+
+  user User @relation("UserProfile", fields: [userId], references: [id])
+}
+
+model Chapter {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  region          String
+  logoUrl         String?
+  logoFileKey     String?
+  slogan          String
+  hqAddress       String
+  establishedDate DateTime
+
+  chapterMembers   ChapterMember[]   @relation("MembershipChapter")
+  chapterOfficials ChapterOfficial[] @relation("ChapterOfficialInChapter")
+  trainings        Training[]        @relation("ChapterTrainings")
+}
+
+enum MemberLevel {
+  APPLICANT
+  MEMBER
+}
+
+model ChapterMember {
+  id          Int         @id @default(autoincrement())
+  userId      Int         @unique
+  chapterId   Int
+  memberLevel MemberLevel @default(APPLICANT)
+  isActive    Boolean     @default(true)
+  batchName   String
+  pruebaDate  DateTime
+
+  user    User    @relation("ChapterMembershipUser", fields: [userId], references: [id])
+  chapter Chapter @relation("MembershipChapter", fields: [chapterId], references: [id])
+}
+
+model ChapterOfficial {
+  id            Int       @id @default(autoincrement())
+  userId        Int       @unique
+  chapterId     Int
+  position      String
+  appointedDate DateTime  @default(now())
+  retiredDate   DateTime?
+
+  user    User    @relation("ChapterOfficialUser", fields: [userId], references: [id])
+  chapter Chapter @relation("ChapterOfficialInChapter", fields: [chapterId], references: [id])
+}
+
+model Training {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  chapterId   Int
+  createdBy   Int
+  orderNo     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  trainingAuthor     User                @relation("TrainingCreator", fields: [createdBy], references: [id])
+  trainingChecklists TrainingChecklist[] @relation("TrainingChecklistItem")
+  trainingLinks      TrainingLink[]      @relation("TrainingLinkItem")
+  chapter            Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
+}
+
+model TrainingChecklist {
+  id           Int      @id @default(autoincrement())
+  trainingId   Int
+  approverId   Int
+  applicantId  Int
+  status       String
+  dateApproved DateTime
+
+  training      Training @relation("TrainingChecklistItem", fields: [trainingId], references: [id])
+  userApprover  User     @relation("TrainingApprover", fields: [approverId], references: [id])
+  userApplicant User     @relation("TrainingApplicant", fields: [applicantId], references: [id])
+}
+
+model TrainingLink {
+  id         Int    @id @default(autoincrement())
+  trainingId Int
+  link       String
+  orderNo    Int
+
+  training Training @relation("TrainingLinkItem", fields: [trainingId], references: [id])
+}

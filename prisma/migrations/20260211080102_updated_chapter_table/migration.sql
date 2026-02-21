@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Chapter" ALTER COLUMN "logoFileKey" DROP NOT NULL,
+ALTER COLUMN "logoUrl" DROP NOT NULL;
