@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Logger } from '@nestjs/common';
 import { TrainingTemplateService } from './training-template.service';
 import { Prisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -6,11 +6,25 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/role-guard';
 
 
+
+export interface TrainingTemplateItem {
+  id?: number;
+  name: string;
+  description: string;
+  hasAdditional: boolean;
+  createdBy: number;
+  orderNo: number;
+  trainingId: number;
+}
+
+
 // @UseGuards(JwtAuthGuard, RolesGuard)
 // @Roles('ADMIN', 'SUPER_ADMIN')
 @Controller('training-templates')
 export class TrainingTemplateController {
   constructor(private readonly trainingTemplateService: TrainingTemplateService) { }
+
+  private readonly logger = new Logger('Training Template Controller')
 
   @Post()
   create(@Body() createTrainingTemplateDto: Prisma.TrainingTemplateCreateInput) {
@@ -24,12 +38,17 @@ export class TrainingTemplateController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.trainingTemplateService.findOne(+id);
+    return this.trainingTemplateService.findByTrainingId(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrainingTemplateDto: Prisma.TrainingUpdateInput) {
-    return this.trainingTemplateService.update(+id, updateTrainingTemplateDto);
+  @Patch()
+  update(@Body() updateTrainingTemplateDto: TrainingTemplateItem) {
+    return this.trainingTemplateService.update(updateTrainingTemplateDto);
+  }
+
+  @Patch('/reorder-templates')
+  reorderById(@Body() updatedOrder) {
+    return this.trainingTemplateService.reorderByIds(updatedOrder)
   }
 
   @Delete(':id')

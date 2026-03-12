@@ -1,6 +1,7 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { TrainingAdditionalItem } from './training-additional-items.controller';
 
 @Injectable()
 export class TrainingAdditionalItemsService {
@@ -10,6 +11,9 @@ export class TrainingAdditionalItemsService {
 
   async create(createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput) {
     try {
+
+      this.logger.debug(createTrainingAdditionalItemDto)
+
       const res = await this.prismaService.trainingAdditionalItems.create({
         data: createTrainingAdditionalItemDto
       })
@@ -20,10 +24,10 @@ export class TrainingAdditionalItemsService {
       }
 
       return res
-      
+
     } catch (error) {
       this.logger.error(error)
-      throw new InternalServerErrorException()
+      throw new BadRequestException()
     }
   }
 
@@ -35,8 +39,17 @@ export class TrainingAdditionalItemsService {
     })
   }
 
-  update(id: number, updateTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsUpdateInput) {
-    return `This action updates a #${id} trainingAdditionalItem`;
+  async update(updateTrainingAdditionalItemDto: TrainingAdditionalItem) {
+    try {
+      const { id } = updateTrainingAdditionalItemDto
+      return await this.prismaService.trainingAdditionalItems.update({
+        where: { id },
+        data: updateTrainingAdditionalItemDto
+      })
+    } catch (error) {
+      this.logger.error(error)
+      throw new BadRequestException()
+    }
   }
 
   remove(id: number) {
