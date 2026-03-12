@@ -12,5 +12,6 @@ export const redisConfig = (configService: ConfigService): RedisModuleOptions =>
     return {
         type: 'single',
         url: `redis://${host}:${port}`,
+        // url: host,
     };
 };

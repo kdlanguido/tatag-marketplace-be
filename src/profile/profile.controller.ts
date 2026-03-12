@@ -7,7 +7,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) { }
 
-
   @Post()
   create(@Body() createProfileDto: Prisma.ProfileCreateInput) {
     return this.profileService.create(createProfileDto);

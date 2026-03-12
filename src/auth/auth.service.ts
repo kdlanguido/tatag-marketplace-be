@@ -38,7 +38,6 @@ export class AuthService {
   }
 
   async generateTokens(user: any) {
-
     const payload: AuthJwtPayload = {
       email: user.email,
       sub: user.id,
@@ -57,7 +56,6 @@ export class AuthService {
   }
 
   async refreshTokens(user: any) {
-
     const { accessToken, refresh_token } = await this.generateTokens(user)
 
     return {

@@ -12,6 +12,8 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { ChapterMemberModule } from './chapter-member/chapter-member.module';
 import { TrainingModule } from './training/training.module';
 import { TrainingChecklistModule } from './training-checklist/training-checklist.module';
+import { TrainingTemplateModule } from './training-template/training-template.module';
+import { TrainingAdditionalItemsModule } from './training-additional-items/training-additional-items.module';
 import Redis from 'ioredis';
 
 @Module({
@@ -32,6 +34,8 @@ import Redis from 'ioredis';
     ChapterMemberModule,
     TrainingModule,
     TrainingChecklistModule,
+    TrainingTemplateModule,
+    TrainingAdditionalItemsModule,
   ],
   providers: [AppService, Redis]
 })

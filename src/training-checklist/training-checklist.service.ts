@@ -4,7 +4,6 @@ import { Prisma } from '@prisma/client';
 @Injectable()
 export class TrainingChecklistService {
   create(createTrainingChecklistDto: Prisma.TrainingChecklistCreateInput) {
-    return 'This action adds a new trainingChecklist';
   }
 
   findAll() {

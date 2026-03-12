@@ -127,9 +127,10 @@ model Training {
   updatedAt   DateTime @updatedAt
 
   trainingAuthor     User                @relation("TrainingCreator", fields: [createdBy], references: [id])
+  chapter            Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
   trainingChecklists TrainingChecklist[] @relation("TrainingChecklistItem")
   trainingLinks      TrainingLink[]      @relation("TrainingLinkItem")
-  chapter            Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
+  trainingTemplates  TrainingTemplate[]  @relation("TrainingTemplate")
 }
 
 model TrainingChecklist {
@@ -152,4 +153,32 @@ model TrainingLink {
   orderNo    Int
 
   training Training @relation("TrainingLinkItem", fields: [trainingId], references: [id])
+}
+
+model TrainingTemplate {
+  id            Int      @id @default(autoincrement())
+  trainingId    Int
+  createdBy     Int
+  name          String
+  description   String
+  hasAdditional Boolean @default(false)
+  orderNo       Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  training                Training                  @relation("TrainingTemplate", fields: [trainingId], references: [id])
+  trainingAdditionalItems TrainingAdditionalItems[] @relation("TrainingAdditionalItems")
+}
+
+model TrainingAdditionalItems {
+  id          Int      @id @default(autoincrement())
+  templateId  Int
+  createdBy   Int
+  name        String
+  description String
+  orderNo     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  trainingTemplate TrainingTemplate @relation("TrainingAdditionalItems", fields: [templateId], references: [id])
 }
