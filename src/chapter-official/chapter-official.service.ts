@@ -42,6 +42,7 @@ export class ChapterOfficialService {
             select: {
               profile: {
                 select: {
+                  id: true,
                   fullName: true,
                   nickname: true,
                   avatarUrl: true

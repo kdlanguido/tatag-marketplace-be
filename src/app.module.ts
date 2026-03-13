@@ -27,10 +27,10 @@ import Redis from 'ioredis';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    RedisModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: redisConfig,
-    }),
+    // RedisModule.forRootAsync({
+    //   inject: [ConfigService],
+    //   useFactory: redisConfig,
+    // }),
     ChapterMemberModule,
     TrainingModule,
     TrainingChecklistModule,

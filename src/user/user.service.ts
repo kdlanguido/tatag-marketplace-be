@@ -9,7 +9,8 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(
     private prisma: PrismaService,
-    @InjectRedis() private readonly redis: Redis) { }
+    // @InjectRedis() private readonly redis: Redis
+  ) { }
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -99,7 +100,6 @@ export class UserService {
     });
 
     if (!user) throw new NotFoundException("User not found!");
-
     return user;
   }
 }
