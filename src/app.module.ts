@@ -6,15 +6,15 @@ import { ChapterOfficialModule } from './chapter-official/chapter-official.modul
 import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { redisConfig } from './config/redis.config';
+// import { redisConfig } from './config/redis.config';
 import { AppService } from './app.service';
-import { RedisModule } from '@nestjs-modules/ioredis';
+// import { RedisModule } from '@nestjs-modules/ioredis';
 import { ChapterMemberModule } from './chapter-member/chapter-member.module';
 import { TrainingModule } from './training/training.module';
 import { TrainingChecklistModule } from './training-checklist/training-checklist.module';
 import { TrainingTemplateModule } from './training-template/training-template.module';
 import { TrainingAdditionalItemsModule } from './training-additional-items/training-additional-items.module';
-import Redis from 'ioredis';
+// import Redis from 'ioredis';
 
 @Module({
   imports: [
@@ -24,6 +24,11 @@ import Redis from 'ioredis';
     ChapterOfficialModule,
     ProfileModule,
     AuthModule,
+    ChapterMemberModule,
+    TrainingModule,
+    TrainingChecklistModule,
+    TrainingTemplateModule,
+    TrainingAdditionalItemsModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),
@@ -31,12 +36,10 @@ import Redis from 'ioredis';
     //   inject: [ConfigService],
     //   useFactory: redisConfig,
     // }),
-    ChapterMemberModule,
-    TrainingModule,
-    TrainingChecklistModule,
-    TrainingTemplateModule,
-    TrainingAdditionalItemsModule,
   ],
-  providers: [AppService, Redis]
+  providers: [
+    AppService,
+    // Redis
+  ]
 })
 export class AppModule { }
