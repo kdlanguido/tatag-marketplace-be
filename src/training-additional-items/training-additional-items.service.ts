@@ -52,7 +52,26 @@ export class TrainingAdditionalItemsService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} trainingAdditionalItem`;
+  async delete(id: number) {
+    try {
+      return await this.prismaService.trainingAdditionalItems.delete({
+        where: {
+          id
+        }
+      })
+    } catch (error) {
+      this.logger.error(error)
+      throw new BadRequestException()
+    }
+  }
+
+  async deleteTemplateAdditionalItems(templateId: number) {
+
+    const trainingAdditionalItems = await this.findByTemplateId(templateId)
+    
+    for (const trainingAdditionalItem of trainingAdditionalItems) {
+      await this.delete(trainingAdditionalItem.id)
+    }
+
   }
 }

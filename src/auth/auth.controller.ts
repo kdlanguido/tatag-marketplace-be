@@ -12,13 +12,19 @@ export class AuthController {
     constructor(
         private authService: AuthService,
         private userService: UserService
-    ) {}
+    ) { }
 
     @UseGuards(LocalAuthGuard)
     @HttpCode(HttpStatus.OK)
     @Post("login")
     async login(@Request() req, @Res({ passthrough: true }) res: Response) {
-        const { accessToken, refresh_token, user } = await this.authService.login(req.user)
+
+        const {
+            accessToken,
+            refresh_token,
+            user
+        } = await this.authService.login(req.user)
+
         return {
             user,
             accessToken,

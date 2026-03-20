@@ -28,7 +28,11 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const { accessToken, refresh_token } = await this.generateTokens(user)
+    
+    const {
+      accessToken,
+      refresh_token
+    } = await this.generateTokens(user)
 
     return {
       user,

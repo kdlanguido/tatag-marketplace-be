@@ -12,7 +12,6 @@ export interface TrainingAdditionalItem {
   templateId: number;
 }
 
-
 @Controller('training-additional-items')
 export class TrainingAdditionalItemsController {
   constructor(private readonly trainingAdditionalItemsService: TrainingAdditionalItemsService) { }
@@ -21,7 +20,6 @@ export class TrainingAdditionalItemsController {
 
   @Post()
   create(@Body() createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput) {
-    this.logger.log(createTrainingAdditionalItemDto)
     return this.trainingAdditionalItemsService.create(createTrainingAdditionalItemDto);
   }
 
@@ -37,6 +35,6 @@ export class TrainingAdditionalItemsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.trainingAdditionalItemsService.remove(+id);
+    return this.trainingAdditionalItemsService.delete(+id);
   }
 }
