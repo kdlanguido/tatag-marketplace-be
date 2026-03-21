@@ -14,6 +14,7 @@ import { TrainingModule } from './training/training.module';
 import { TrainingChecklistModule } from './training-checklist/training-checklist.module';
 import { TrainingTemplateModule } from './training-template/training-template.module';
 import { TrainingAdditionalItemsModule } from './training-additional-items/training-additional-items.module';
+import { ChapterApplicantModule } from './chapter-applicant/chapter-applicant.module';
 // import Redis from 'ioredis';
 
 @Module({
@@ -32,6 +33,7 @@ import { TrainingAdditionalItemsModule } from './training-additional-items/train
     ConfigModule.forRoot({
       isGlobal: true
     }),
+    ChapterApplicantModule,
     // RedisModule.forRootAsync({
     //   inject: [ConfigService],
     //   useFactory: redisConfig,

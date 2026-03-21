@@ -3,6 +3,7 @@ import {ApiProperty} from '@nestjs/swagger'
 import {ChapterMember} from './chapter-member.entity'
 import {ChapterOfficial} from './chapter-official.entity'
 import {Training} from './training.entity'
+import {ChapterApplicant} from './chapter-applicant.entity'
 
 
 export class Chapter {
@@ -25,4 +26,5 @@ establishedDate: Date ;
 chapterMembers?: ChapterMember[] ;
 chapterOfficials?: ChapterOfficial[] ;
 trainings?: Training[] ;
+chapterApplicant?: ChapterApplicant[] ;
 }

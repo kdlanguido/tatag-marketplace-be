@@ -1,11 +1,11 @@
 
-import {ChapterOfficialPosition} from '@prisma/client'
+import {ApplicantStatus} from '@prisma/client'
 import {ApiProperty} from '@nestjs/swagger'
 import {User} from './user.entity'
 import {Chapter} from './chapter.entity'
 
 
-export class ChapterOfficial {
+export class ChapterApplicant {
   @ApiProperty({
   type: `integer`,
   format: `int32`,
@@ -15,26 +15,32 @@ id: number ;
   type: `integer`,
   format: `int32`,
 })
-userId: number ;
+chapterId: number ;
 @ApiProperty({
   type: `integer`,
   format: `int32`,
 })
-chapterId: number ;
+approverId: number  | null;
 @ApiProperty({
-  enum: ChapterOfficialPosition,
+  type: `integer`,
+  format: `int32`,
 })
-position: ChapterOfficialPosition ;
-@ApiProperty({
-  type: `string`,
-  format: `date-time`,
-})
-appointedDate: Date ;
+applicantId: number ;
 @ApiProperty({
   type: `string`,
   format: `date-time`,
 })
-retiredDate: Date  | null;
-user?: User ;
+appliedDate: Date ;
+@ApiProperty({
+  type: `string`,
+  format: `date-time`,
+})
+dateApproved: Date  | null;
+@ApiProperty({
+  enum: ApplicantStatus,
+})
+status: ApplicantStatus ;
+userApprover?: User  | null;
+userApplicant?: User ;
 chapter?: Chapter ;
 }

@@ -1,26 +1,26 @@
 
-import {ChapterOfficialPosition} from '@prisma/client'
+import {ApplicantStatus} from '@prisma/client'
 import {ApiProperty} from '@nestjs/swagger'
 
 
-export class ChapterOfficialDto {
+export class ChapterApplicantDto {
   @ApiProperty({
   type: `integer`,
   format: `int32`,
 })
 id: number ;
 @ApiProperty({
-  enum: ChapterOfficialPosition,
+  type: `string`,
+  format: `date-time`,
 })
-position: ChapterOfficialPosition ;
+appliedDate: Date ;
 @ApiProperty({
   type: `string`,
   format: `date-time`,
 })
-appointedDate: Date ;
+dateApproved: Date  | null;
 @ApiProperty({
-  type: `string`,
-  format: `date-time`,
+  enum: ApplicantStatus,
 })
-retiredDate: Date  | null;
+status: ApplicantStatus ;
 }

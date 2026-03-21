@@ -6,12 +6,12 @@ import {ApiProperty} from '@nestjs/swagger'
 
 
 
-export class UpdateChapterOfficialDto {
+export class UpdateChapterApplicantDto {
   @ApiProperty({
   type: `string`,
   format: `date-time`,
 })
 @IsOptional()
 @IsRFC3339()
-retiredDate?: Date;
+dateApproved?: Date;
 }
