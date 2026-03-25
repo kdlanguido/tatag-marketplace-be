@@ -105,19 +105,23 @@ model Profile {
 }
 
 model Chapter {
-  id              Int      @id @default(autoincrement())
-  name            String   @unique
-  region          String
-  logoUrl         String?
-  logoFileKey     String?
-  slogan          String
-  hqAddress       String
-  establishedDate DateTime
+  id                 Int      @id @default(autoincrement())
+  name               String   @unique
+  region             String
+  logoUrl            String?
+  logoFileKey        String?
+  slogan             String
+  hqAddress          String
+  establishedDate    DateTime
+  isVisible          Boolean  @default(true)
+  isTrainingRequired Boolean?
+  requiredTrainingId Int?
 
   chapterMembers   ChapterMember[]    @relation("MembershipChapter")
   chapterOfficials ChapterOfficial[]  @relation("ChapterOfficialInChapter")
   trainings        Training[]         @relation("ChapterTrainings")
   chapterApplicant ChapterApplicant[] @relation("ChapterApplying")
+  requiredTraining Training?          @relation("requiredTrainingId", fields: [requiredTrainingId], references: [id])
 }
 
 model ChapterMember {
@@ -180,11 +184,12 @@ model Training {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  trainingAuthor     User                @relation("TrainingCreator", fields: [createdBy], references: [id])
-  chapter            Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
-  trainingChecklists TrainingChecklist[] @relation("TrainingChecklistItem")
-  trainingLinks      TrainingLink[]      @relation("TrainingLinkItem")
-  trainingTemplates  TrainingTemplate[]  @relation("TrainingTemplate")
+  trainingAuthor          User                @relation("TrainingCreator", fields: [createdBy], references: [id])
+  chapter                 Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
+  trainingChecklists      TrainingChecklist[] @relation("TrainingChecklistItem")
+  trainingLinks           TrainingLink[]      @relation("TrainingLinkItem")
+  trainingTemplates       TrainingTemplate[]  @relation("TrainingTemplate")
+  chapterRequiredTraining Chapter[]           @relation("requiredTrainingId")
 }
 
 model TrainingChecklist {

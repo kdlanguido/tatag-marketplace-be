@@ -2,7 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
-import { LoggingInterceptorInterceptor } from './logging-interceptor/logging-interceptor.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging-interceptor/logging-interceptor.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response-interceptor/response-interceptor.interceptor';
+import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception.filter';
 
 dotenv.config();
 
@@ -13,11 +15,17 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
-  )
+      transform: true,
+    }),
+  );
 
-  app.useGlobalInterceptors(new LoggingInterceptorInterceptor())
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new ResponseInterceptor(),
+  );
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
   app.enableCors();
 
   await app.listen(process.env.PORT ?? 4000);

@@ -23,8 +23,16 @@ hqAddress: string ;
   format: `date-time`,
 })
 establishedDate: Date ;
+isVisible: boolean ;
+isTrainingRequired: boolean  | null;
+@ApiProperty({
+  type: `integer`,
+  format: `int32`,
+})
+requiredTrainingId: number  | null;
 chapterMembers?: ChapterMember[] ;
 chapterOfficials?: ChapterOfficial[] ;
 trainings?: Training[] ;
 chapterApplicant?: ChapterApplicant[] ;
+requiredTraining?: Training  | null;
 }

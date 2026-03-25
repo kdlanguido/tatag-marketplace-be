@@ -44,9 +44,4 @@ export class ChapterController {
   ) {
     return this.chapterService.update(+id, updateChapterDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chapterService.remove(+id);
-  }
 }

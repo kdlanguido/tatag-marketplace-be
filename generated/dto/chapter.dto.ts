@@ -19,4 +19,6 @@ hqAddress: string ;
   format: `date-time`,
 })
 establishedDate: Date ;
+isVisible: boolean ;
+isTrainingRequired: boolean  | null;
 }

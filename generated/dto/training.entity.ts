@@ -45,4 +45,5 @@ chapter?: Chapter ;
 trainingChecklists?: TrainingChecklist[] ;
 trainingLinks?: TrainingLink[] ;
 trainingTemplates?: TrainingTemplate[] ;
+chapterRequiredTraining?: Chapter[] ;
 }
