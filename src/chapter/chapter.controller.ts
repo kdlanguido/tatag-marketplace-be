@@ -1,13 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Logger,
+} from '@nestjs/common';
 import { ChapterService } from './chapter.service';
 import { Prisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/role-guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('chapters')
 export class ChapterController {
-  constructor(private readonly chapterService: ChapterService) { }
+  constructor(private readonly chapterService: ChapterService) {}
+
+  private readonly logger = new Logger(ChapterService.name);
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,12 +41,11 @@ export class ChapterController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChapterDto: Prisma.ChapterUpdateInput) {
+  update(
+    @Param('id') id: string,
+    @Body() updateChapterDto: Prisma.ChapterUncheckedUpdateInput,
+  ) {
+    this.logger.debug(updateChapterDto);
     return this.chapterService.update(+id, updateChapterDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chapterService.remove(+id);
   }
 }

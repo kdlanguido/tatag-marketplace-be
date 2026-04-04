@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ChapterMember" ALTER COLUMN "pruebaDate" SET DEFAULT CURRENT_TIMESTAMP;

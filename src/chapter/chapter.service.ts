@@ -4,31 +4,34 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ChapterService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-  private readonly logger = new Logger(ChapterService.name)
+  private readonly logger = new Logger(ChapterService.name);
 
   async create(createChapterDto: Prisma.ChapterCreateInput) {
     try {
       return await this.prisma.chapter.create({
-        data: createChapterDto
+        data: createChapterDto,
       });
     } catch (error) {
-      this.logger.debug(error)
-      throw new BadRequestException(error.message)
+      this.logger.debug(error);
+      throw new BadRequestException(error.message);
     }
   }
 
   async findAll() {
     try {
-      return (await this.prisma.chapter.findMany({
+      return await this.prisma.chapter.findMany({
         orderBy: {
-          name: 'asc'
-        }
-      }))
+          name: 'asc',
+        },
+        where: {
+          isVisible: true,
+        },
+      });
     } catch (error) {
-      console.log(error)
-      throw new BadRequestException(error.message)
+      console.log(error);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -36,28 +39,32 @@ export class ChapterService {
     try {
       return await this.prisma.chapter.findUnique({
         where: {
-          id
-        }
-      })
+          id,
+          isVisible: true,
+        },
+      });
     } catch (error) {
-      console.log(error)
-      throw new BadRequestException(error.message)
+      console.log(error);
+      throw new BadRequestException(error.message);
     }
   }
 
-  async update(id: number, updateChapterDto: Prisma.ChapterUpdateInput) {
+  async update(
+    id: number,
+    updateChapterDto: Prisma.ChapterUncheckedUpdateInput,
+  ) {
     try {
       const chapter = await this.prisma.chapter.update({
-        where: { id },
+        where: {
+          id,
+        },
         data: updateChapterDto,
       });
+
+      this.logger.debug(chapter);
       return chapter;
     } catch (error) {
       throw error;
     }
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chapter`;
   }
 }

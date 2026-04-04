@@ -6,6 +6,7 @@ import {ChapterMember} from './chapter-member.entity'
 import {ChapterOfficial} from './chapter-official.entity'
 import {Training} from './training.entity'
 import {TrainingChecklist} from './training-checklist.entity'
+import {ChapterApplicant} from './chapter-applicant.entity'
 
 
 export class User {
@@ -28,4 +29,6 @@ chapterOfficial?: ChapterOfficial  | null;
 trainings?: Training[] ;
 trainingChecklistApprover?: TrainingChecklist[] ;
 trainingChecklistApplicant?: TrainingChecklist[] ;
+chapterApplicants?: ChapterApplicant[] ;
+chapterApplicantApprover?: ChapterApplicant[] ;
 }

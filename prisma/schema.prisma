@@ -36,6 +36,39 @@ enum Role {
   SUPER_ADMIN
 }
 
+enum MemberLevel {
+  APPLICANT
+  MEMBER
+}
+
+enum ApplicantStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+}
+
+enum ChapterOfficialPosition {
+  PRESIDENT
+  VICE_PRESIDENT
+  CHAPTER_ADMIN
+  SECRETARY
+  TREASURER
+}
+
+enum AccessGroup {
+  APPLICANT_APPROVER
+  TRAINING_APPROVER
+  PROMOTION_APPROVER
+}
+
+enum Permission {
+  CREATE
+  UPDATE
+  READ
+  ARCHIVE
+}
+
 model User {
   id       Int     @id @default(autoincrement())
   role     Role    @default(USER)
@@ -50,12 +83,13 @@ model User {
   trainings                  Training[]          @relation("TrainingCreator")
   trainingChecklistApprover  TrainingChecklist[] @relation("TrainingApprover")
   trainingChecklistApplicant TrainingChecklist[] @relation("TrainingApplicant")
+  chapterApplicants          ChapterApplicant[]  @relation("ChapterApplicant")
+  chapterApplicantApprover   ChapterApplicant[]  @relation("ChapterApplicantApprover")
 }
 
 model Profile {
-  id     Int @id @default(autoincrement())
-  userId Int @unique
-
+  id            Int       @id @default(autoincrement())
+  userId        Int       @unique
   fullName      String?
   nickname      String?   @unique
   birthdate     DateTime?
@@ -72,23 +106,25 @@ model Profile {
 }
 
 model Chapter {
-  id              Int      @id @default(autoincrement())
-  name            String   @unique
-  region          String
-  logoUrl         String?
-  logoFileKey     String?
-  slogan          String
-  hqAddress       String
-  establishedDate DateTime
+  id                    Int      @id @default(autoincrement())
+  name                  String   @unique
+  region                String
+  logoUrl               String?
+  logoFileKey           String?
+  slogan                String
+  hqAddress             String
+  establishedDate       DateTime
+  isVisible             Boolean  @default(true)
+  isTrainingRequired    Boolean? @default(false)
+  isApplicationRequired Boolean? @default(false)
+  requiredTrainingId    Int?
+  chapterCode           String?  @default("")
 
-  chapterMembers   ChapterMember[]   @relation("MembershipChapter")
-  chapterOfficials ChapterOfficial[] @relation("ChapterOfficialInChapter")
-  trainings        Training[]        @relation("ChapterTrainings")
-}
-
-enum MemberLevel {
-  APPLICANT
-  MEMBER
+  chapterMembers   ChapterMember[]    @relation("MembershipChapter")
+  chapterOfficials ChapterOfficial[]  @relation("ChapterOfficialInChapter")
+  trainings        Training[]         @relation("ChapterTrainings")
+  chapterApplicant ChapterApplicant[] @relation("ChapterApplying")
+  requiredTraining Training?          @relation("requiredTrainingId", fields: [requiredTrainingId], references: [id])
 }
 
 model ChapterMember {
@@ -97,23 +133,48 @@ model ChapterMember {
   chapterId   Int
   memberLevel MemberLevel @default(APPLICANT)
   isActive    Boolean     @default(true)
-  batchName   String
-  pruebaDate  DateTime
+  batchName   String      @default("NBN") // NBN = no batch name
+  pruebaDate  DateTime    @default(now())
 
   user    User    @relation("ChapterMembershipUser", fields: [userId], references: [id])
   chapter Chapter @relation("MembershipChapter", fields: [chapterId], references: [id])
 }
 
+model ChapterApplicant {
+  id           Int             @id @default(autoincrement())
+  chapterId    Int
+  approverId   Int?
+  applicantId  Int
+  appliedDate  DateTime        @default(now())
+  dateApproved DateTime?
+  status       ApplicantStatus @default(PENDING)
+
+  userApprover  User?   @relation("ChapterApplicantApprover", fields: [approverId], references: [id])
+  userApplicant User    @relation("ChapterApplicant", fields: [applicantId], references: [id])
+  chapter       Chapter @relation("ChapterApplying", fields: [chapterId], references: [id])
+}
+
 model ChapterOfficial {
-  id            Int       @id @default(autoincrement())
-  userId        Int       @unique
+  id            Int                     @id @default(autoincrement())
+  userId        Int                     @unique
   chapterId     Int
-  position      String
-  appointedDate DateTime  @default(now())
+  position      ChapterOfficialPosition @default(CHAPTER_ADMIN)
+  appointedDate DateTime                @default(now())
   retiredDate   DateTime?
 
   user    User    @relation("ChapterOfficialUser", fields: [userId], references: [id])
   chapter Chapter @relation("ChapterOfficialInChapter", fields: [chapterId], references: [id])
+}
+
+model ChapterOfficialAccessGroup {
+  id          Int                     @id @default(autoincrement())
+  position    ChapterOfficialPosition
+  accessGroup AccessGroup
+}
+
+model AccessGroupPermission {
+  id          Int         @id @default(autoincrement())
+  accessGroup AccessGroup
 }
 
 model Training {
@@ -126,11 +187,12 @@ model Training {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  trainingAuthor     User                @relation("TrainingCreator", fields: [createdBy], references: [id])
-  chapter            Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
-  trainingChecklists TrainingChecklist[] @relation("TrainingChecklistItem")
-  trainingLinks      TrainingLink[]      @relation("TrainingLinkItem")
-  trainingTemplates  TrainingTemplate[]  @relation("TrainingTemplate")
+  trainingAuthor          User                @relation("TrainingCreator", fields: [createdBy], references: [id])
+  chapter                 Chapter             @relation("ChapterTrainings", fields: [chapterId], references: [id])
+  trainingChecklists      TrainingChecklist[] @relation("TrainingChecklistItem")
+  trainingLinks           TrainingLink[]      @relation("TrainingLinkItem")
+  trainingTemplates       TrainingTemplate[]  @relation("TrainingTemplate")
+  chapterRequiredTraining Chapter[]           @relation("requiredTrainingId")
 }
 
 model TrainingChecklist {
@@ -156,15 +218,16 @@ model TrainingLink {
 }
 
 model TrainingTemplate {
-  id                      Int                       @id @default(autoincrement())
-  trainingId              Int
-  createdBy               Int
-  name                    String
-  description             String
-  hasAdditional           Boolean                   @default(false)
-  orderNo                 Int
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime                  @updatedAt
+  id            Int      @id @default(autoincrement())
+  trainingId    Int
+  createdBy     Int
+  name          String
+  description   String
+  hasAdditional Boolean  @default(false)
+  orderNo       Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
   training                Training                  @relation("TrainingTemplate", fields: [trainingId], references: [id])
   trainingAdditionalItems TrainingAdditionalItems[] @relation("TrainingAdditionalItems")
 }

@@ -1,6 +1,6 @@
 
 import {Type} from 'class-transformer'
-import {IsNotEmpty,IsOptional,IsRFC3339,IsString} from 'class-validator'
+import {IsBoolean,IsNotEmpty,IsOptional,IsRFC3339,IsString} from 'class-validator'
 import {ApiProperty,getSchemaPath} from '@nestjs/swagger'
 
 
@@ -32,4 +32,22 @@ hqAddress: string;
 @IsNotEmpty()
 @IsRFC3339()
 establishedDate: Date;
+@ApiProperty({
+  default: false,
+})
+@IsOptional()
+@IsBoolean()
+isTrainingRequired?: boolean;
+@ApiProperty({
+  default: false,
+})
+@IsOptional()
+@IsBoolean()
+isApplicationRequired?: boolean;
+@ApiProperty({
+  default: ``,
+})
+@IsOptional()
+@IsString()
+chapterCode?: string;
 }

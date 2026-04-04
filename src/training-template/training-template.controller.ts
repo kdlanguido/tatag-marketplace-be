@@ -13,7 +13,7 @@ import { TrainingTemplateService } from './training-template.service';
 import { Prisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guards/role-guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 
 export interface TrainingTemplateItem {
   id?: number;

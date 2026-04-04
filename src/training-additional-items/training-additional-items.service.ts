@@ -1,54 +1,59 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TrainingAdditionalItem } from './training-additional-items.controller';
 
 @Injectable()
 export class TrainingAdditionalItemsService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
 
-  private logger = new Logger("TrainingAdditionalItems")
+  private logger = new Logger('TrainingAdditionalItems');
 
-  async create(createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput) {
+  async create(
+    createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput,
+  ) {
     try {
-
-      this.logger.debug(createTrainingAdditionalItemDto)
+      this.logger.debug(createTrainingAdditionalItemDto);
 
       const res = await this.prismaService.trainingAdditionalItems.create({
-        data: createTrainingAdditionalItemDto
-      })
+        data: createTrainingAdditionalItemDto,
+      });
 
       if (!res) {
-        this.logger.error(res)
-        throw new InternalServerErrorException()
+        this.logger.error(res);
+        throw new InternalServerErrorException();
       }
 
-      return res
-
+      return res;
     } catch (error) {
-      this.logger.error(error)
-      throw new BadRequestException()
+      this.logger.error(error);
+      throw new BadRequestException();
     }
   }
 
   findByTemplateId(id: number) {
     return this.prismaService.trainingAdditionalItems.findMany({
       where: {
-        templateId: id
-      }
-    })
+        templateId: id,
+      },
+    });
   }
 
   async update(updateTrainingAdditionalItemDto: TrainingAdditionalItem) {
     try {
-      const { id } = updateTrainingAdditionalItemDto
+      const { id } = updateTrainingAdditionalItemDto;
       return await this.prismaService.trainingAdditionalItems.update({
         where: { id },
-        data: updateTrainingAdditionalItemDto
-      })
+        data: updateTrainingAdditionalItemDto,
+      });
     } catch (error) {
-      this.logger.error(error)
-      throw new BadRequestException()
+      this.logger.error(error);
+      throw new BadRequestException();
     }
   }
 
@@ -56,22 +61,20 @@ export class TrainingAdditionalItemsService {
     try {
       return await this.prismaService.trainingAdditionalItems.delete({
         where: {
-          id
-        }
-      })
+          id,
+        },
+      });
     } catch (error) {
-      this.logger.error(error)
-      throw new BadRequestException()
+      this.logger.error(error);
+      throw new BadRequestException();
     }
   }
 
   async deleteTemplateAdditionalItems(templateId: number) {
+    const trainingAdditionalItems = await this.findByTemplateId(templateId);
 
-    const trainingAdditionalItems = await this.findByTemplateId(templateId)
-    
     for (const trainingAdditionalItem of trainingAdditionalItems) {
-      await this.delete(trainingAdditionalItem.id)
+      await this.delete(trainingAdditionalItem.id);
     }
-
   }
 }

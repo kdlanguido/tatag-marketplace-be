@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+} from '@nestjs/common';
 import { TrainingAdditionalItemsService } from './training-additional-items.service';
 import { Prisma } from '@prisma/client';
-
 
 export interface TrainingAdditionalItem {
   name: string;
@@ -14,13 +22,21 @@ export interface TrainingAdditionalItem {
 
 @Controller('training-additional-items')
 export class TrainingAdditionalItemsController {
-  constructor(private readonly trainingAdditionalItemsService: TrainingAdditionalItemsService) { }
+  constructor(
+    private readonly trainingAdditionalItemsService: TrainingAdditionalItemsService,
+  ) {}
 
-  private readonly logger = new Logger("Training Addtl Item Controller")
+  private readonly logger = new Logger('Training Addtl Item Controller');
 
   @Post()
-  create(@Body() createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput) {
-    return this.trainingAdditionalItemsService.create(createTrainingAdditionalItemDto);
+  create(
+    @Body()
+    createTrainingAdditionalItemDto: Prisma.TrainingAdditionalItemsCreateInput,
+  ) {
+    this.logger.log(createTrainingAdditionalItemDto);
+    return this.trainingAdditionalItemsService.create(
+      createTrainingAdditionalItemDto,
+    );
   }
 
   @Get(':id')
@@ -30,7 +46,9 @@ export class TrainingAdditionalItemsController {
 
   @Patch()
   update(@Body() updateTrainingAdditionalItemDto: TrainingAdditionalItem) {
-    return this.trainingAdditionalItemsService.update(updateTrainingAdditionalItemDto);
+    return this.trainingAdditionalItemsService.update(
+      updateTrainingAdditionalItemDto,
+    );
   }
 
   @Delete(':id')

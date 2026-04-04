@@ -1,4 +1,5 @@
 
+import {ChapterOfficialPosition} from '@prisma/client'
 import {ApiProperty} from '@nestjs/swagger'
 
 
@@ -8,7 +9,10 @@ export class ChapterOfficialDto {
   format: `int32`,
 })
 id: number ;
-position: string ;
+@ApiProperty({
+  enum: ChapterOfficialPosition,
+})
+position: ChapterOfficialPosition ;
 @ApiProperty({
   type: `string`,
   format: `date-time`,

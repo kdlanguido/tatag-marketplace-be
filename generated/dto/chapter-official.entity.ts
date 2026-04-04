@@ -1,4 +1,5 @@
 
+import {ChapterOfficialPosition} from '@prisma/client'
 import {ApiProperty} from '@nestjs/swagger'
 import {User} from './user.entity'
 import {Chapter} from './chapter.entity'
@@ -20,7 +21,10 @@ userId: number ;
   format: `int32`,
 })
 chapterId: number ;
-position: string ;
+@ApiProperty({
+  enum: ChapterOfficialPosition,
+})
+position: ChapterOfficialPosition ;
 @ApiProperty({
   type: `string`,
   format: `date-time`,
