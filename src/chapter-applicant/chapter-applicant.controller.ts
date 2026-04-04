@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, UseGuards, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Logger,
+  Param,
+} from '@nestjs/common';
 import { ChapterApplicantService } from './chapter-applicant.service';
 import { Prisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -20,13 +28,17 @@ export class ChapterApplicantController {
     const res = await this.chapterApplicantService.create(
       createChapterApplicantDto,
     );
-    this.logger.debug(res);
     return res;
   }
 
   @Get()
   findAll() {
     return this.chapterApplicantService.findAll();
+  }
+
+  @Get('has-pending/:id')
+  checkIfHasPendingApplication(@Param('id') id: string) {
+    return this.chapterApplicantService.checkIfHasPendingApplication(+id);
   }
 
   // @Get(':id')

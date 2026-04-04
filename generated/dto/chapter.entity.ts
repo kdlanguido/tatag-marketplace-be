@@ -25,11 +25,13 @@ hqAddress: string ;
 establishedDate: Date ;
 isVisible: boolean ;
 isTrainingRequired: boolean  | null;
+isApplicationRequired: boolean  | null;
 @ApiProperty({
   type: `integer`,
   format: `int32`,
 })
 requiredTrainingId: number  | null;
+chapterCode: string  | null;
 chapterMembers?: ChapterMember[] ;
 chapterOfficials?: ChapterOfficial[] ;
 trainings?: Training[] ;

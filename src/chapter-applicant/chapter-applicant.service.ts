@@ -1,10 +1,11 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { T } from 'node_modules/@upstash/redis/error-8y4qG0W2';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -19,65 +20,48 @@ export class ChapterApplicantService {
     // to add validations
     try {
       const { applicantId, chapterId } = createChapterApplicantDto;
-      const hasPending = await this.applicantHasPendingApplication(
+
+      const hasPending = await this.checkIfHasPendingApplication(
         Number(applicantId),
       );
 
-      this.logger.debug(hasPending);
-
       if (hasPending) {
-        //to improve
-        const res = {
-          statusCode: '402',
-          message: 'Applicant has pending application.',
-        };
-
-        this.logger.debug(res);
-
-        return res;
+        throw new HttpException(
+          'Applicant has pending application.',
+          HttpStatus.BAD_REQUEST,
+        );
       } else {
-        const input = {
-          applicantId: Number(applicantId),
-          chapterId: Number(chapterId),
-        };
-
         const res = await this.prismaService.chapterApplicant.create({
-          data: input,
+          data: {
+            applicantId: Number(applicantId),
+            chapterId: Number(chapterId),
+          },
         });
-
-        this.logger.debug('im here');
-
         return res;
       }
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async applicantHasPendingApplication(applicantId: number) {
+  async checkIfHasPendingApplication(applicantId: number) {
     try {
-      const res = await this.prismaService.chapterApplicant.findMany({
-        select: {
-          applicantId: true,
-        },
+      const res = await this.prismaService.chapterApplicant.findFirst({
         where: {
           applicantId,
-          status: 'PENDING',
+          status: {
+            not: 'COMPLETED',
+          },
         },
       });
 
-      if (res.length > 0) {
-        return true;
-      }
-
-      return false;
+      return res;
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException();
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
   async findAll() {
-    return this.prismaService.chapterApplicant.findMany();
+    return await this.prismaService.chapterApplicant.findMany();
   }
 }

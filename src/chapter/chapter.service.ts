@@ -49,7 +49,10 @@ export class ChapterService {
     }
   }
 
-  async update(id: number, updateChapterDto: Prisma.ChapterUpdateInput) {
+  async update(
+    id: number,
+    updateChapterDto: Prisma.ChapterUncheckedUpdateInput,
+  ) {
     try {
       const chapter = await this.prisma.chapter.update({
         where: {
@@ -57,6 +60,8 @@ export class ChapterService {
         },
         data: updateChapterDto,
       });
+
+      this.logger.debug(chapter);
       return chapter;
     } catch (error) {
       throw error;

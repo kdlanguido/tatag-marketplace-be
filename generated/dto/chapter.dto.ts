@@ -21,4 +21,6 @@ hqAddress: string ;
 establishedDate: Date ;
 isVisible: boolean ;
 isTrainingRequired: boolean  | null;
+isApplicationRequired: boolean  | null;
+chapterCode: string  | null;
 }

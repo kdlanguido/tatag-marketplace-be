@@ -45,6 +45,7 @@ enum ApplicantStatus {
   PENDING
   ACCEPTED
   DECLINED
+  COMPLETED
 }
 
 enum ChapterOfficialPosition {
@@ -105,17 +106,19 @@ model Profile {
 }
 
 model Chapter {
-  id                 Int      @id @default(autoincrement())
-  name               String   @unique
-  region             String
-  logoUrl            String?
-  logoFileKey        String?
-  slogan             String
-  hqAddress          String
-  establishedDate    DateTime
-  isVisible          Boolean  @default(true)
-  isTrainingRequired Boolean?
-  requiredTrainingId Int?
+  id                    Int      @id @default(autoincrement())
+  name                  String   @unique
+  region                String
+  logoUrl               String?
+  logoFileKey           String?
+  slogan                String
+  hqAddress             String
+  establishedDate       DateTime
+  isVisible             Boolean  @default(true)
+  isTrainingRequired    Boolean? @default(false)
+  isApplicationRequired Boolean? @default(false)
+  requiredTrainingId    Int?
+  chapterCode           String?  @default("")
 
   chapterMembers   ChapterMember[]    @relation("MembershipChapter")
   chapterOfficials ChapterOfficial[]  @relation("ChapterOfficialInChapter")
@@ -130,8 +133,8 @@ model ChapterMember {
   chapterId   Int
   memberLevel MemberLevel @default(APPLICANT)
   isActive    Boolean     @default(true)
-  batchName   String
-  pruebaDate  DateTime
+  batchName   String      @default("NBN") // NBN = no batch name
+  pruebaDate  DateTime    @default(now())
 
   user    User    @relation("ChapterMembershipUser", fields: [userId], references: [id])
   chapter Chapter @relation("MembershipChapter", fields: [chapterId], references: [id])

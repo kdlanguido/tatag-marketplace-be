@@ -32,7 +32,22 @@ hqAddress: string;
 @IsNotEmpty()
 @IsRFC3339()
 establishedDate: Date;
+@ApiProperty({
+  default: false,
+})
 @IsOptional()
 @IsBoolean()
 isTrainingRequired?: boolean;
+@ApiProperty({
+  default: false,
+})
+@IsOptional()
+@IsBoolean()
+isApplicationRequired?: boolean;
+@ApiProperty({
+  default: ``,
+})
+@IsOptional()
+@IsString()
+chapterCode?: string;
 }
