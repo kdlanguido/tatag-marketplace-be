@@ -1,21 +1,27 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProfileService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
 
-  private readonly logger = new Logger(ProfileService.name)
+  private readonly logger = new Logger(ProfileService.name);
 
   async create(createProfileDto: Prisma.ProfileCreateInput) {
     try {
       return await this.prismaService.profile.create({
-        data: createProfileDto
-      })
+        data: createProfileDto,
+      });
     } catch (error) {
-      this.logger.error(error.message)
-      throw new BadRequestException(error.message)
+      this.logger.error(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -27,15 +33,15 @@ export class ProfileService {
     try {
       const res = await this.prismaService.profile.findUnique({
         where: {
-          userId: id
-        }
-      })
+          userId: id,
+        },
+      });
 
       if (!res) {
         throw new NotFoundException();
       }
 
-      return res
+      return res;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException('Failed to fetch profile');
@@ -43,20 +49,19 @@ export class ProfileService {
   }
 
   async findOne(id: number) {
-
-    this.logger.log(id)
+    this.logger.log(id);
     try {
       const res = await this.prismaService.profile.findUnique({
         where: {
-          id
-        }
-      })
+          id,
+        },
+      });
 
       if (!res) {
         throw new NotFoundException();
       }
 
-      return res
+      return res;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException('Failed to fetch profile');
@@ -67,13 +72,13 @@ export class ProfileService {
     try {
       return await this.prismaService.profile.update({
         where: {
-          userId: id
+          userId: id,
         },
-        data: updateProfileDto
-      })
+        data: updateProfileDto,
+      });
     } catch (error) {
-      this.logger.debug(error.message)
-      throw new BadRequestException()
+      this.logger.debug(error.message);
+      throw new BadRequestException();
     }
   }
 

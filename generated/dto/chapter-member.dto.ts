@@ -1,5 +1,5 @@
 
-import {MemberLevel} from '@prisma/client'
+import {MemberLevel,ApplicationStatus} from '@prisma/client'
 import {ApiProperty} from '@nestjs/swagger'
 
 
@@ -13,11 +13,26 @@ id: number ;
   enum: MemberLevel,
 })
 memberLevel: MemberLevel ;
-isActive: boolean ;
 batchName: string ;
 @ApiProperty({
   type: `string`,
   format: `date-time`,
 })
 pruebaDate: Date ;
+isActive: boolean ;
+@ApiProperty({
+  enum: ApplicationStatus,
+})
+applicationStatus: ApplicationStatus  | null;
+@ApiProperty({
+  type: `string`,
+  format: `date-time`,
+})
+applicationApprovedDate: Date  | null;
+applicationApproverRemarks: string  | null;
+@ApiProperty({
+  type: `string`,
+  format: `date-time`,
+})
+applicationDate: Date  | null;
 }

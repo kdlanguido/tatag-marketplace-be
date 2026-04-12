@@ -40,7 +40,10 @@ export class ChapterApplicantService {
         return res;
       }
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        error as unknown as string,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -54,10 +57,13 @@ export class ChapterApplicantService {
           },
         },
       });
-
       return res;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      this.logger.error('Error checking pending application', error);
+      throw new HttpException(
+        'Failed to check application status',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
