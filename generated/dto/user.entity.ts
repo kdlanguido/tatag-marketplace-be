@@ -31,4 +31,5 @@ trainingChecklistApprover?: TrainingChecklist[] ;
 trainingChecklistApplicant?: TrainingChecklist[] ;
 chapterApplicants?: ChapterApplicant[] ;
 chapterApplicantApprover?: ChapterApplicant[] ;
+applicationApprover?: ChapterMember[] ;
 }

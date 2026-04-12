@@ -113,6 +113,7 @@ export class UserService {
         profile: true,
         chapterMember: {
           select: {
+            id: true,
             chapter: true,
             chapterId: true,
             memberLevel: true,

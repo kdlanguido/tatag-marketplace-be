@@ -85,6 +85,7 @@ model User {
   trainingChecklistApplicant TrainingChecklist[] @relation("TrainingApplicant")
   chapterApplicants          ChapterApplicant[]  @relation("ChapterApplicant")
   chapterApplicantApprover   ChapterApplicant[]  @relation("ChapterApplicantApprover")
+  applicationApprover        ChapterMember[]     @relation("ApplicationApprover")
 }
 
 model Profile {
@@ -128,16 +129,29 @@ model Chapter {
 }
 
 model ChapterMember {
-  id          Int         @id @default(autoincrement())
-  userId      Int         @unique
-  chapterId   Int
-  memberLevel MemberLevel @default(APPLICANT)
-  isActive    Boolean     @default(true)
-  batchName   String      @default("NBN") // NBN = no batch name
-  pruebaDate  DateTime    @default(now())
+  id                         Int                @id @default(autoincrement())
+  userId                     Int                @unique
+  chapterId                  Int
+  memberLevel                MemberLevel        @default(APPLICANT)
+  batchName                  String             @default("NBN") // NBN = no batch name
+  pruebaDate                 DateTime           @default(now())
+  isActive                   Boolean            @default(true)
+  applicationStatus          ApplicationStatus? @default(WAIVED)
+  applicationApprovedDate    DateTime?
+  applicationApproverId      Int?
+  applicationApproverRemarks String?
+  applicationDate            DateTime?          @default(now())
 
-  user    User    @relation("ChapterMembershipUser", fields: [userId], references: [id])
-  chapter Chapter @relation("MembershipChapter", fields: [chapterId], references: [id])
+  user                    User    @relation("ChapterMembershipUser", fields: [userId], references: [id])
+  applicationApproverUser User?   @relation("ApplicationApprover", fields: [applicationApproverId], references: [id])
+  chapter                 Chapter @relation("MembershipChapter", fields: [chapterId], references: [id])
+}
+
+enum ApplicationStatus {
+  WAIVED
+  FOR_APPROVAL
+  APPROVED
+  DECLINED
 }
 
 model ChapterApplicant {

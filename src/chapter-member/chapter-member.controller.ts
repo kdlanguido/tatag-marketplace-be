@@ -11,8 +11,9 @@ import {
 import { ChapterMemberService } from './chapter-member.service';
 import { Prisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import type { ApproveChapterMemberPayload } from './chapter-member.types';
 
-@Controller('chapter-member')
+@Controller('chapter-members')
 export class ChapterMemberController {
   constructor(private readonly chapterMemberService: ChapterMemberService) {}
 
@@ -22,23 +23,46 @@ export class ChapterMemberController {
     return this.chapterMemberService.create(createChapterMemberDto);
   }
 
-  @Get()
-  findAll() {
-    return this.chapterMemberService.findAll();
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chapterMemberService.findOne(+id);
+  findChapterMembersByChapterId(@Param('id') id: string) {
+    return this.chapterMemberService.findChapterMembersByChapterId(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateChapterMemberDto: Prisma.ChapterMemberUpdateInput,
-  ) {
-    return this.chapterMemberService.update(+id, updateChapterMemberDto);
+  @Get('/user-id/:id')
+  findChapterMemberByUserId(@Param('id') id: string) {
+    return this.chapterMemberService.findChapterMemberByUserId(+id);
   }
+
+  @Get('/profile-id/:id')
+  findChapterMemberByProfileId(@Param('id') id: string) {
+    return this.chapterMemberService.findChapterMemberByProfileId(+id);
+  }
+
+  @Get('/for-approval/:id')
+  findChapterMemberRequestForApproval(@Param('id') id: string) {
+    return this.chapterMemberService.findChapterMemberRequestForApproval(+id);
+  }
+
+  @Patch('/approve-request')
+  approveChapterMemberRequest(
+    @Body() approveChapterMemberPayload: ApproveChapterMemberPayload,
+  ) {
+    return this.chapterMemberService.processChapterMemberRequestForApproval(
+      approveChapterMemberPayload,
+    );
+  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.chapterMemberService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateChapterMemberDto: Prisma.ChapterMemberUpdateInput,
+  // ) {
+  //   return this.chapterMemberService.update(+id, updateChapterMemberDto);
+  // }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
