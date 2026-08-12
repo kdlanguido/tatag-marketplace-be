@@ -257,7 +257,7 @@ export class ChapterMemberService {
   }
 
   async approveChapterMemberRequest(payload: ChapterMemberApplicationInput) {
-    const { id, applicationApproverId, applicationApproverRemarks } = payload;
+    const { id, applicationApproverId, batchName } = payload;
 
     const res = await this.prisma.chapterMember.update({
       where: {
@@ -268,9 +268,7 @@ export class ChapterMemberService {
         memberLevel: 'MEMBER',
         applicationApprovedDate: new Date().toISOString(),
         applicationApproverId,
-        applicationApproverRemarks: applicationApproverRemarks?.trim()
-          ? applicationApproverRemarks
-          : 'Congratulations -Club Approver',
+        batchName,
       },
     });
 
