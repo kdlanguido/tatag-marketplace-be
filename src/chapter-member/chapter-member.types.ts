@@ -5,5 +5,5 @@ export type ApproveChapterMemberPayload = {
 export type ChapterMemberApplicationInput = {
   id: number;
   applicationApproverId: number;
-  applicationApproverRemarks: string;
+  batchName: string;
 };
