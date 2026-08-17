@@ -66,7 +66,29 @@ export class ChapterMemberService {
         throw new BadRequestException('Fetching the chapter members failed!');
       }
 
-      return { data: res, message: 'Chapter member fetched successfully' };
+      // Sort: PIONEER → BATCH 1 → BATCH 2 → BATCH 3 → ...
+      res.sort((a, b) => {
+        const getBatchOrder = (batchName: string) => {
+          if (batchName === 'PIONEER') {
+            return 0;
+          }
+
+          const match = batchName.match(/^BATCH (\d+)$/);
+
+          if (match) {
+            return Number(match[1]);
+          }
+
+          return Infinity;
+        };
+
+        return getBatchOrder(a.batchName) - getBatchOrder(b.batchName);
+      });
+
+      return {
+        data: res,
+        message: 'Chapter member fetched successfully',
+      };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(error);
